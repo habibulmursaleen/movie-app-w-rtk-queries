@@ -15,7 +15,7 @@ const SearchBar: FC<Props> = () => {
   return (
     <div className="flex justify-center">
       <input
-        className="flex justify-center bg-[#39445a] text-white p-2 w-80 border border-gray-400 rounded placeholder-gray font-bold"
+        className="flex justify-center bg-[#4a566c] text-white p-2 w-80 border border-gray-400 rounded placeholder-gray font-bold"
         type="text"
         onChange={handleInputChange}
         placeholder="Search..."

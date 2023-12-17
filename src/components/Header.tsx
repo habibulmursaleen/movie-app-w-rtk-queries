@@ -19,7 +19,7 @@ const Header = () => {
       <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-4">
         <select
           id="sort"
-          className="bg-yellow-500 font-bold px-4 py-2 border border-gray-300 rounded cursor-pointer text-white hover:bg-white hover:text-black"
+          className="bg-[#4a566c] font-bold px-4 py-2 border border-gray-300 rounded cursor-pointer text-white hover:bg-white hover:text-black"
           onChange={handleSortChange}
         >
           <option>Sort & Filter By</option>
