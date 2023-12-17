@@ -2,7 +2,7 @@ import Pagination from "@mui/material/Pagination";
 import Skeleton from "@mui/material/Skeleton";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../app/hooks";
 import {
   useGetFilteredMoviesQuery,
@@ -36,54 +36,66 @@ const MovieList: React.FC<MovieListProps> = () => {
     setFilterOptions(sort);
   }, [sort]);
 
-  let content = null;
+  const content = useMemo(() => {
+    if (isLoading) {
+      return (
+        <div className="flex flex-wrap justify-around">
+          <Skeleton variant="rectangular" width={300} height={160} />
+          <Skeleton variant="rectangular" width={300} height={160} />
+          <Skeleton variant="rectangular" width={300} height={160} />
+          <Skeleton variant="rectangular" width={300} height={160} />
+        </div>
+      );
+    }
 
-  if (isLoading)
-    content = (
-      <div className="flex flex-wrap justify-around">
-        <Skeleton variant="rectangular" width={300} height={160} />
-        <Skeleton variant="rectangular" width={300} height={160} />
-        <Skeleton variant="rectangular" width={300} height={160} />
-        <Skeleton variant="rectangular" width={300} height={160} />
-      </div>
-    );
+    if (!isLoading && isError) {
+      return <Snackbar message="There has been an error fetching movies." />;
+    }
 
-  if (!isLoading && isError)
-    content = <Snackbar message="There has been an error fetching movies." />;
+    if (!isError && !isLoading && movies?.length === 0) {
+      return <Snackbar message="No Movies Found" />;
+    }
 
-  if (!isError && !isLoading && movies?.length === 0) {
-    content = <Snackbar message="No Movies Found" />;
-  }
+    if (!isLoading && !isError && movies?.results?.length > 0) {
+      return (
+        <div className="flex flex-wrap justify-around p-4">
+          {movies.results.map((movie: Movie) => (
+            <SingleMovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      );
+    }
 
-  if (!isLoading && !isError && movies?.results?.length > 0) {
-    content = (
-      <div className="flex flex-wrap justify-around p-4">
-        {movies.results.map((movie: Movie) => (
-          <SingleMovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-    );
-  }
+    if (sort?.length > 0) {
+      return (
+        <div className="flex flex-wrap justify-around p-4">
+          {filteredMovies.results.map((movie: Movie) => (
+            <SingleMovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      );
+    }
 
-  if (sort?.length > 0) {
-    content = (
-      <div className="flex flex-wrap justify-around p-4">
-        {filteredMovies.results.map((movie: Movie) => (
-          <SingleMovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-    );
-  }
+    if (search?.length > 0) {
+      return (
+        <div className="flex flex-wrap justify-around p-4">
+          {searchedMovies.results.map((movie: Movie) => (
+            <SingleMovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      );
+    }
 
-  if (search?.length > 0) {
-    content = (
-      <div className="flex flex-wrap justify-around p-4">
-        {searchedMovies.results.map((movie: Movie) => (
-          <SingleMovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-    );
-  }
+    return null;
+  }, [
+    isLoading,
+    isError,
+    movies,
+    sort,
+    filteredMovies?.results,
+    search,
+    searchedMovies?.results,
+  ]);
 
   return (
     <div className="flex flex-col items-center">
